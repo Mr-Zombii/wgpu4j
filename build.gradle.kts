@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "org.wgpu4j"
-version = "0.1.0-SNAPSHOT"
+version = if (System.getenv("GITHUB_EVENT_RELEASE_TAG") == null) "1.0-SNAPSHOT" else System.getenv("GITHUB_EVENT_RELEASE_TAG")
 description = "Java bindings for wgpu-native using Project Panama"
 
 repositories {
@@ -306,7 +306,7 @@ publishing {
             pom {
                 name = project.name
                 description = project.description
-                url = "https://github.com/tychedelia/wgpu4j"
+                url = "https://github.com/Mr-Zombii/wgpu4j"
 
                 licenses {
                     license {
@@ -321,12 +321,17 @@ publishing {
                         name = "tychedelia"
                         email = "tychedelia@users.noreply.github.com"
                     }
+                    developer {
+                        id = "mr-zombii"
+                        name = "Mr-Zombii"
+                        email = "153239453+Mr-Zombii@users.noreply.github.com"
+                    }
                 }
 
                 scm {
-                    connection = "scm:git:git://github.com/tychedelia/wgpu4j.git"
-                    developerConnection = "scm:git:ssh://github.com:tychedelia/wgpu4j.git"
-                    url = "https://github.com/tychedelia/wgpu4j/tree/main"
+                    connection = "scm:git:git://github.com/Mr-Zombii/wgpu4j.git"
+                    developerConnection = "scm:git:ssh://github.com:Mr-Zombii/wgpu4j.git"
+                    url = "https://github.com/Mr-Zombii/wgpu4j/tree/main"
                 }
             }
         }

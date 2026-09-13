@@ -22,8 +22,8 @@ Gradle will install `jextract` automatically if it is not found in your system P
 
 1. Download the appropriate build for your platform from [jdk.java.net/jextract](https://jdk.java.net/jextract/)
 2. Extract to a standard location:
-    - Linux/macOS: `~/.local/jextract` or `/usr/local/jextract`
-    - Windows: `%USERPROFILE%\AppData\Local\Programs\jextract` or `C:\Program Files\jextract`
+   - Linux/macOS: `~/.local/jextract` or `/usr/local/jextract`
+   - Windows: `%USERPROFILE%\AppData\Local\Programs\jextract` or `C:\Program Files\jextract`
 3. Add the `bin` directory to your PATH, or set `JEXTRACT_HOME` environment variable
 4. On macOS: Run `sudo xattr -r -d com.apple.quarantine /path/to/jextract` to remove quarantine
 
@@ -45,3 +45,29 @@ cd wgpu4j-examples
 ## Usage
 
 See [the examples](./wgpu4j-examples) for usage patterns.
+
+Add this to your gradle repositories
+
+gradle (default):
+```gradle
+maven {
+   url 'https://raw.githubusercontent.com/Mr-Zombii/git-maven/refs/heads/main/'
+}
+```
+
+and add to your dependencies
+```gradle
+implementation "org.wgpu4j:wgpu4j:{insert-version}"
+```
+
+gradle.kts:
+```kotlin
+maven {
+   url = uri("https://raw.githubusercontent.com/Mr-Zombii/git-maven/refs/heads/main/")
+}
+```
+
+and add to your dependencies
+```gradle
+implementation("org.wgpu4j:wgpu4j:{insert-version}")
+```
