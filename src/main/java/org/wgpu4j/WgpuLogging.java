@@ -2,11 +2,14 @@ package org.wgpu4j;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wgpu4j.bindings.wgpu_h;
 import org.wgpu4j.bindings.WGPULogCallback;
 import org.wgpu4j.bindings.WGPUStringView;
+import org.wgpu4j.bindings.wgpu_h;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.Linker;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;

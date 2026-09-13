@@ -1,11 +1,14 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.constant.TextureFormat;
+import org.wgpu4j.bindings.WGPUExtent3D;
+import org.wgpu4j.bindings.WGPUStringView;
+import org.wgpu4j.bindings.WGPUTextureDescriptor;
 import org.wgpu4j.constant.TextureDimension;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.constant.TextureFormat;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
 /**
  * Configuration for creating a texture.

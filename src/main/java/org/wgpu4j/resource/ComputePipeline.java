@@ -4,8 +4,8 @@ import org.wgpu4j.WgpuException;
 import org.wgpu4j.WgpuResource;
 import org.wgpu4j.bindings.webgpu_h;
 
-import java.lang.foreign.MemorySegment;
 import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
 /**
  * Represents a compute pipeline that can execute compute shaders on the GPU.

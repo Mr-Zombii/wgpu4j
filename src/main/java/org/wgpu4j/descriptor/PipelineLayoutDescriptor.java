@@ -1,12 +1,15 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
+import org.wgpu4j.bindings.WGPUPipelineLayoutDescriptor;
+import org.wgpu4j.bindings.WGPUStringView;
 import org.wgpu4j.resource.BindGroupLayout;
-import org.wgpu4j.bindings.*;
 
-import java.lang.foreign.*;
-import java.util.List;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Configuration for creating a pipeline layout.

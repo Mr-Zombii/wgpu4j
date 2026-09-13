@@ -3,12 +3,13 @@ package org.wgpu4j.resource;
 import org.wgpu4j.WgpuException;
 import org.wgpu4j.WgpuNative;
 import org.wgpu4j.WgpuResource;
-import org.wgpu4j.constant.TextureFormat;
+import org.wgpu4j.bindings.webgpu_h;
 import org.wgpu4j.constant.TextureDimension;
+import org.wgpu4j.constant.TextureFormat;
 import org.wgpu4j.descriptor.TextureViewDescriptor;
-import org.wgpu4j.bindings.*;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
 /**
  * Represents a GPU texture resource.

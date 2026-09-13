@@ -99,6 +99,7 @@ public abstract class WgpuResource implements AutoCloseable {
     }
 
     @Override
+    @SuppressWarnings("removal")
     protected void finalize() throws Throwable {
         try {
             if (!closed) {

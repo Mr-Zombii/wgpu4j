@@ -1,12 +1,15 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.bindings.*;
-import org.wgpu4j.resource.TextureView;
+import org.wgpu4j.bindings.WGPUColor;
+import org.wgpu4j.bindings.WGPURenderPassColorAttachment;
+import org.wgpu4j.bindings.webgpu_h;
 import org.wgpu4j.constant.LoadOp;
 import org.wgpu4j.constant.StoreOp;
+import org.wgpu4j.resource.TextureView;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
 /**
  * Configuration for a color attachment in a render pass.
@@ -15,6 +18,7 @@ import java.lang.foreign.*;
 public class RenderPassColorAttachment implements Marshalable {
     private final TextureView view;
     private final TextureView resolveTarget;
+    private final int depthSlice;
     private final LoadOp loadOp;
     private final StoreOp storeOp;
     private final double clearR;
@@ -23,10 +27,11 @@ public class RenderPassColorAttachment implements Marshalable {
     private final double clearA;
 
     private RenderPassColorAttachment(TextureView view, TextureView resolveTarget,
-                                      LoadOp loadOp, StoreOp storeOp,
+                                      int depthSlice, LoadOp loadOp, StoreOp storeOp,
                                       double clearR, double clearG, double clearB, double clearA) {
         this.view = view;
         this.resolveTarget = resolveTarget;
+        this.depthSlice = depthSlice;
         this.loadOp = loadOp;
         this.storeOp = storeOp;
         this.clearR = clearR;
@@ -41,6 +46,10 @@ public class RenderPassColorAttachment implements Marshalable {
 
     public TextureView getResolveTarget() {
         return resolveTarget;
+    }
+
+    public int getDepthSlice() {
+        return depthSlice;
     }
 
     public LoadOp getLoadOp() {
@@ -85,6 +94,8 @@ public class RenderPassColorAttachment implements Marshalable {
             WGPURenderPassColorAttachment.resolveTarget(struct, MemorySegment.NULL);
         }
 
+        WGPURenderPassColorAttachment.depthSlice(struct, depthSlice);
+
         WGPURenderPassColorAttachment.loadOp(struct, loadOp.getValue());
         WGPURenderPassColorAttachment.storeOp(struct, storeOp.getValue());
 
@@ -104,6 +115,7 @@ public class RenderPassColorAttachment implements Marshalable {
     public static class Builder {
         private TextureView view;
         private TextureView resolveTarget = null;
+        private int depthSlice = webgpu_h.WGPU_DEPTH_SLICE_UNDEFINED();
         private LoadOp loadOp = LoadOp.CLEAR;
         private StoreOp storeOp = StoreOp.STORE;
         private double clearR = 0.0;
@@ -124,6 +136,14 @@ public class RenderPassColorAttachment implements Marshalable {
          */
         public Builder resolveTarget(TextureView resolveTarget) {
             this.resolveTarget = resolveTarget;
+            return this;
+        }
+
+        /*
+        * Sets the depth slice
+        */
+        public Builder depthSlice(int slice) {
+            this.depthSlice = slice;
             return this;
         }
 
@@ -172,7 +192,7 @@ public class RenderPassColorAttachment implements Marshalable {
             if (view == null) {
                 throw new IllegalArgumentException("Texture view is required");
             }
-            return new RenderPassColorAttachment(view, resolveTarget, loadOp, storeOp,
+            return new RenderPassColorAttachment(view, resolveTarget, depthSlice, loadOp, storeOp,
                     clearR, clearG, clearB, clearA);
         }
     }

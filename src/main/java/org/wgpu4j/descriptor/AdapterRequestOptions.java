@@ -1,8 +1,8 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.constant.PowerPreference;
 import org.wgpu4j.bindings.WGPURequestAdapterOptions;
+import org.wgpu4j.constant.PowerPreference;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;

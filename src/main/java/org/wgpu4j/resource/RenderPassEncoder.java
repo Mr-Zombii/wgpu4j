@@ -3,10 +3,13 @@ package org.wgpu4j.resource;
 import org.wgpu4j.WgpuException;
 import org.wgpu4j.WgpuNative;
 import org.wgpu4j.WgpuResource;
+import org.wgpu4j.bindings.WGPUColor;
+import org.wgpu4j.bindings.webgpu_h;
 import org.wgpu4j.constant.IndexFormat;
-import org.wgpu4j.bindings.*;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 
 /**
  * Used to record rendering commands within a render pass.

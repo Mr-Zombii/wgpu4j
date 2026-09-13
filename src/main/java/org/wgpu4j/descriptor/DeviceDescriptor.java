@@ -1,10 +1,14 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.bindings.WGPUDeviceDescriptor;
+import org.wgpu4j.bindings.WGPUQueueDescriptor;
+import org.wgpu4j.bindings.WGPUStringView;
 import org.wgpu4j.constant.FeatureName;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;

@@ -11,11 +11,6 @@ public final class VertexStepMode {
     }
 
     /**
-     * Vertex buffer is not used.
-     */
-    public static final int VERTEX_BUFFER_NOT_USED = webgpu_h.WGPUVertexStepMode_VertexBufferNotUsed();
-
-    /**
      * Undefined step mode.
      */
     public static final int UNDEFINED = webgpu_h.WGPUVertexStepMode_Undefined();

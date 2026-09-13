@@ -1,5 +1,8 @@
 package org.wgpu4j.utils;
 
+import org.lwjgl.system.JNI;
+import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.system.macosx.ObjCRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,61 +29,45 @@ public class MacOSSurfaceHelper {
         }
 
         try {
-            Class<?> objcRuntimeClass = Class.forName("org.lwjgl.system.macosx.ObjCRuntime");
-            Class<?> jniClass = Class.forName("org.lwjgl.system.JNI");
-            Class<?> memoryUtilClass = Class.forName("org.lwjgl.system.MemoryUtil");
+            long objc_msgSend = ObjCRuntime.getLibrary().getFunctionAddress("objc_msgSend");
 
-            var getLibrary = objcRuntimeClass.getDeclaredMethod("getLibrary");
-            var selGetUid = objcRuntimeClass.getDeclaredMethod("sel_getUid", CharSequence.class);
-            var objcGetClass = objcRuntimeClass.getDeclaredMethod("objc_getClass", CharSequence.class);
-            var invokePPP = jniClass.getDeclaredMethod("invokePPP", long.class, long.class, long.class);
-            var invokePPPV = jniClass.getDeclaredMethod("invokePPPV", long.class, long.class, long.class, long.class);
-            var nullValue = memoryUtilClass.getDeclaredField("NULL");
+            long sel_alloc = ObjCRuntime.sel_getUid("alloc");
+            long sel_init = ObjCRuntime.sel_getUid("init");
+            long sel_contentView = ObjCRuntime.sel_getUid("contentView");
+            long sel_setLayer = ObjCRuntime.sel_getUid("setLayer:");
+            long sel_setWantsLayer = ObjCRuntime.sel_getUid("setWantsLayer:");
+            long class_CAMetalLayer = ObjCRuntime.objc_getClass("CAMetalLayer");
 
-            Object library = getLibrary.invoke(null);
-            var getFunctionAddress = library.getClass().getMethod("getFunctionAddress", CharSequence.class);
-            long objc_msgSend = (Long) getFunctionAddress.invoke(library, "objc_msgSend");
-
-            long sel_alloc = (Long) selGetUid.invoke(null, "alloc");
-            long sel_init = (Long) selGetUid.invoke(null, "init");
-            long sel_contentView = (Long) selGetUid.invoke(null, "contentView");
-            long sel_setLayer = (Long) selGetUid.invoke(null, "setLayer:");
-            long sel_setWantsLayer = (Long) selGetUid.invoke(null, "setWantsLayer:");
-            long class_CAMetalLayer = (Long) objcGetClass.invoke(null, "CAMetalLayer");
-            long NULL = (Long) nullValue.get(null);
-
-            if (class_CAMetalLayer == NULL) {
+            if (class_CAMetalLayer == MemoryUtil.NULL) {
                 throw new RuntimeException("CAMetalLayer class not found - QuartzCore framework not available");
             }
-            if (objc_msgSend == NULL) {
+            if (objc_msgSend == MemoryUtil.NULL) {
                 throw new RuntimeException("objc_msgSend function not found - Objective-C runtime not available");
             }
 
-            long metalLayer = (Long) invokePPP.invoke(null,
-                    invokePPP.invoke(null, class_CAMetalLayer, sel_alloc, objc_msgSend),
+            long metalLayer = JNI.invokePPP(
+                    JNI.invokePPP(class_CAMetalLayer, sel_alloc, objc_msgSend),
                     sel_init,
-                    objc_msgSend);
+                    objc_msgSend
+            );
 
-            if (metalLayer == NULL) {
+            if (metalLayer == MemoryUtil.NULL) {
                 throw new RuntimeException("Failed to create CAMetalLayer");
             }
 
-            long contentView = (Long) invokePPP.invoke(null, nsWindow, sel_contentView, objc_msgSend);
-            if (contentView == NULL) {
+            long contentView = JNI.invokePPP(nsWindow, sel_contentView, objc_msgSend);
+            if (contentView == MemoryUtil.NULL) {
                 throw new RuntimeException("Failed to get NSWindow content view");
             }
 
-            invokePPPV.invoke(null, contentView, sel_setLayer, metalLayer, objc_msgSend);
-            invokePPPV.invoke(null, contentView, sel_setWantsLayer, 1L, objc_msgSend);
+            JNI.invokePPPV(contentView, sel_setWantsLayer, 1L, objc_msgSend);
+            JNI.invokePPPV(contentView, sel_setLayer, metalLayer, objc_msgSend);
 
             logger.info("Created CAMetalLayer: 0x{} for NSWindow: 0x{}",
                     Long.toHexString(metalLayer), Long.toHexString(nsWindow));
 
             return metalLayer;
 
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(
-                    "LWJGL is required for macOS surface creation. Please add LWJGL to your classpath.", e);
         } catch (Exception e) {
             throw new RuntimeException("Failed to create CAMetalLayer using Objective-C runtime", e);
         }

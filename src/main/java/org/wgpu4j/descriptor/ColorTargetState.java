@@ -1,10 +1,11 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.bindings.WGPUColorTargetState;
 import org.wgpu4j.constant.TextureFormat;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
 /**
  * Configuration for a color render target in a render pipeline.

@@ -1,10 +1,12 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.constant.*;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.bindings.WGPUTextureBindingLayout;
+import org.wgpu4j.constant.TextureSampleType;
+import org.wgpu4j.constant.TextureViewDimension;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
 /**
  * Layout configuration for texture bindings in a bind group.

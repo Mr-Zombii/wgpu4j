@@ -1,11 +1,14 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.resource.ShaderModule;
+import org.wgpu4j.bindings.WGPUComputePipelineDescriptor;
+import org.wgpu4j.bindings.WGPUComputeState;
+import org.wgpu4j.bindings.WGPUStringView;
 import org.wgpu4j.resource.PipelineLayout;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.resource.ShaderModule;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -76,17 +79,17 @@ public class ComputePipelineDescriptor implements Marshalable {
     }
 
     private void setupComputeStage(MemorySegment computeStage, Arena arena) {
-        WGPUProgrammableStageDescriptor.nextInChain(computeStage, MemorySegment.NULL);
+        WGPUComputeState.nextInChain(computeStage, MemorySegment.NULL);
 
-        WGPUProgrammableStageDescriptor.module(computeStage, computeShader.getHandle());
+        WGPUComputeState.module(computeStage, computeShader.getHandle());
 
-        MemorySegment entryPointView = WGPUProgrammableStageDescriptor.entryPoint(computeStage);
+        MemorySegment entryPointView = WGPUComputeState.entryPoint(computeStage);
         MemorySegment entryPointData = arena.allocateFrom(entryPoint, StandardCharsets.UTF_8);
         WGPUStringView.data(entryPointView, entryPointData);
         WGPUStringView.length(entryPointView, entryPoint.length());
 
-        WGPUProgrammableStageDescriptor.constantCount(computeStage, 0);
-        WGPUProgrammableStageDescriptor.constants(computeStage, MemorySegment.NULL);
+        WGPUComputeState.constantCount(computeStage, 0);
+        WGPUComputeState.constants(computeStage, MemorySegment.NULL);
     }
 
     public static Builder builder() {

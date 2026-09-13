@@ -3,10 +3,11 @@ package org.wgpu4j.resource;
 import org.wgpu4j.WgpuException;
 import org.wgpu4j.WgpuNative;
 import org.wgpu4j.WgpuResource;
+import org.wgpu4j.bindings.webgpu_h;
 import org.wgpu4j.descriptor.*;
-import org.wgpu4j.bindings.*;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
 /**
  * Used to record commands that will be submitted to the GPU.

@@ -5,13 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.wgpu4j.WgpuException;
 import org.wgpu4j.WgpuNative;
 import org.wgpu4j.WgpuResource;
+import org.wgpu4j.bindings.*;
+import org.wgpu4j.constant.InstanceBackend;
 import org.wgpu4j.descriptor.AdapterRequestOptions;
 import org.wgpu4j.descriptor.InstanceDescriptor;
 import org.wgpu4j.descriptor.InstanceExtras;
-import org.wgpu4j.constant.InstanceBackend;
-import org.wgpu4j.bindings.*;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 import java.util.concurrent.CompletableFuture;
 
 /**

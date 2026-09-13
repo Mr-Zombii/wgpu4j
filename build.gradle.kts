@@ -19,14 +19,19 @@ repositories {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
+        languageVersion = JavaLanguageVersion.of(22)
     }
     withSourcesJar()
     withJavadocJar()
 }
 
+val lwjglVersion = "3.3.6"
+
 dependencies {
     api("org.slf4j:slf4j-api:2.0.9")
+    api(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
+    api("org.lwjgl:lwjgl")
+    api("org.lwjgl:lwjgl-glfw")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -46,7 +51,7 @@ tasks.withType<Javadoc> {
     if (JavaVersion.current().isJava9Compatible) {
         options {
             this as StandardJavadocDocletOptions
-            addStringOption("-source", "24")
+            addStringOption("-source", "22")
             addBooleanOption("html5", true)
         }
     }
@@ -60,7 +65,7 @@ sourceSets {
     }
 }
 
-val wgpuVersion = "25.0.2.1"
+val wgpuVersion = "29.0.1.1"
 val buildType = "release"
 
 val supportedPlatforms = listOf(
@@ -69,7 +74,10 @@ val supportedPlatforms = listOf(
     "linux-aarch64",
     "linux-x86_64",
     "windows-aarch64-msvc",
-    "windows-x86_64-msvc"
+    "windows-x86_64-msvc",
+    "android-x86_64",
+    "android-armv7",
+    "ios-aarch64",
 )
 
 tasks.register("downloadAllWgpuNatives") {

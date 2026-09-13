@@ -3,11 +3,12 @@ package org.wgpu4j.resource;
 import org.wgpu4j.WgpuException;
 import org.wgpu4j.WgpuNative;
 import org.wgpu4j.WgpuResource;
-import org.wgpu4j.descriptor.DeviceRequestOptions;
-import org.wgpu4j.descriptor.DeviceDescriptor;
 import org.wgpu4j.bindings.*;
+import org.wgpu4j.descriptor.DeviceDescriptor;
+import org.wgpu4j.descriptor.DeviceRequestOptions;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 import java.util.concurrent.CompletableFuture;
 
 /**

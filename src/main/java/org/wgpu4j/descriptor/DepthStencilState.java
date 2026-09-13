@@ -4,8 +4,8 @@ import org.wgpu4j.Marshalable;
 import org.wgpu4j.bindings.WGPUDepthStencilState;
 import org.wgpu4j.bindings.WGPUStencilFaceState;
 import org.wgpu4j.constant.CompareFunction;
-import org.wgpu4j.constant.TextureFormat;
 import org.wgpu4j.constant.StencilOperation;
+import org.wgpu4j.constant.TextureFormat;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;

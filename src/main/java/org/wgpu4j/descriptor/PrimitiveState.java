@@ -1,13 +1,14 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.bindings.*;
-import org.wgpu4j.constant.PrimitiveTopology;
-import org.wgpu4j.constant.IndexFormat;
-import org.wgpu4j.constant.FrontFace;
+import org.wgpu4j.bindings.WGPUPrimitiveState;
 import org.wgpu4j.constant.CullMode;
+import org.wgpu4j.constant.FrontFace;
+import org.wgpu4j.constant.IndexFormat;
+import org.wgpu4j.constant.PrimitiveTopology;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
 /**
  * Configuration for primitive assembly and rasterization state.

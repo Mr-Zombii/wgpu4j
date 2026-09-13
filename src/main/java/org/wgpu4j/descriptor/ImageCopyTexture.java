@@ -1,9 +1,10 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.bindings.*;
-import org.wgpu4j.resource.Texture;
+import org.wgpu4j.bindings.WGPUOrigin3D;
+import org.wgpu4j.bindings.WGPUTexelCopyTextureInfo;
 import org.wgpu4j.constant.TextureAspect;
+import org.wgpu4j.resource.Texture;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;

@@ -1,25 +1,28 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.bindings.WGPUComputeState;
+import org.wgpu4j.bindings.WGPUConstantEntry;
+import org.wgpu4j.bindings.WGPUStringView;
 import org.wgpu4j.resource.ShaderModule;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Configuration for a programmable shader stage (vertex, fragment, or compute).
+ * Configuration for a compute shader stage (vertex, fragment, or compute).
  * Contains the shader module, entry point function name, and shader constants.
  */
-public class ProgrammableStageDescriptor implements Marshalable {
+public class ComputeState implements Marshalable {
     private final ShaderModule module;
     private final String entryPoint;
     private final List<ConstantEntry> constants;
 
-    private ProgrammableStageDescriptor(ShaderModule module, String entryPoint, List<ConstantEntry> constants) {
+    private ComputeState(ShaderModule module, String entryPoint, List<ConstantEntry> constants) {
         this.module = module;
         this.entryPoint = entryPoint;
         this.constants = new ArrayList<>(constants);
@@ -41,36 +44,36 @@ public class ProgrammableStageDescriptor implements Marshalable {
      * Converts this descriptor to a C struct using jextract layouts.
      *
      * @param arena The arena to allocate the struct in
-     * @return MemorySegment representing the WGPUProgrammableStageDescriptor struct
+     * @return MemorySegment representing the WGPUComputeState struct
      */
     public MemorySegment marshal(Arena arena) {
-        MemorySegment struct = WGPUProgrammableStageDescriptor.allocate(arena);
+        MemorySegment struct = WGPUComputeState.allocate(arena);
 
-        WGPUProgrammableStageDescriptor.nextInChain(struct, MemorySegment.NULL);
+        WGPUComputeState.nextInChain(struct, MemorySegment.NULL);
 
-        WGPUProgrammableStageDescriptor.module(struct, module.getHandle());
+        WGPUComputeState.module(struct, module.getHandle());
 
         if (entryPoint != null && !entryPoint.isEmpty()) {
             MemorySegment entryPointBytes = arena.allocateFrom(entryPoint, StandardCharsets.UTF_8);
-            MemorySegment entryPointStringView = WGPUProgrammableStageDescriptor.entryPoint(struct);
+            MemorySegment entryPointStringView = WGPUComputeState.entryPoint(struct);
             WGPUStringView.data(entryPointStringView, entryPointBytes);
             WGPUStringView.length(entryPointStringView, entryPoint.length());
         } else {
-            MemorySegment entryPointStringView = WGPUProgrammableStageDescriptor.entryPoint(struct);
+            MemorySegment entryPointStringView = WGPUComputeState.entryPoint(struct);
             WGPUStringView.data(entryPointStringView, MemorySegment.NULL);
             WGPUStringView.length(entryPointStringView, 0);
         }
 
-        WGPUProgrammableStageDescriptor.constantCount(struct, constants.size());
+        WGPUComputeState.constantCount(struct, constants.size());
         if (!constants.isEmpty()) {
             MemorySegment constantsArray = WGPUConstantEntry.allocateArray(constants.size(), arena);
             for (int i = 0; i < constants.size(); i++) {
                 MemorySegment constantStruct = WGPUConstantEntry.asSlice(constantsArray, i);
                 MemorySegment.copy(constants.get(i).marshal(arena), 0L, constantStruct, 0L, WGPUConstantEntry.sizeof());
             }
-            WGPUProgrammableStageDescriptor.constants(struct, constantsArray);
+            WGPUComputeState.constants(struct, constantsArray);
         } else {
-            WGPUProgrammableStageDescriptor.constants(struct, MemorySegment.NULL);
+            WGPUComputeState.constants(struct, MemorySegment.NULL);
         }
 
         return struct;
@@ -83,7 +86,7 @@ public class ProgrammableStageDescriptor implements Marshalable {
     public static class Builder {
         private ShaderModule module;
         private String entryPoint = "main";
-        private List<ConstantEntry> constants = new ArrayList<>();
+        private final List<ConstantEntry> constants = new ArrayList<>();
 
         public Builder module(ShaderModule module) {
             this.module = module;
@@ -114,14 +117,14 @@ public class ProgrammableStageDescriptor implements Marshalable {
             return this;
         }
 
-        public ProgrammableStageDescriptor build() {
+        public ComputeState build() {
             if (module == null) {
                 throw new IllegalArgumentException("Shader module is required");
             }
             if (entryPoint == null || entryPoint.isEmpty()) {
                 throw new IllegalArgumentException("Entry point is required");
             }
-            return new ProgrammableStageDescriptor(module, entryPoint, constants);
+            return new ComputeState(module, entryPoint, constants);
         }
     }
 }

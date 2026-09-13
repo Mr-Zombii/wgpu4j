@@ -3,8 +3,8 @@ package org.wgpu4j.descriptor;
 import org.wgpu4j.Marshalable;
 import org.wgpu4j.bindings.WGPUBindGroupEntry;
 import org.wgpu4j.resource.Buffer;
-import org.wgpu4j.resource.TextureView;
 import org.wgpu4j.resource.Sampler;
+import org.wgpu4j.resource.TextureView;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;

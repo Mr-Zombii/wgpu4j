@@ -3,9 +3,9 @@ package org.wgpu4j.resource;
 import org.wgpu4j.WgpuException;
 import org.wgpu4j.WgpuNative;
 import org.wgpu4j.WgpuResource;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.bindings.webgpu_h;
 
-import java.lang.foreign.*;
+import java.lang.foreign.MemorySegment;
 
 /**
  * A buffer of recorded commands ready for submission to the GPU.

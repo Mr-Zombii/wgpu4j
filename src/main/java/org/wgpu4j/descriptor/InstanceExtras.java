@@ -1,11 +1,15 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.bindings.WGPUChainedStruct;
+import org.wgpu4j.bindings.WGPUInstanceExtras;
+import org.wgpu4j.bindings.WGPUStringView;
+import org.wgpu4j.bindings.wgpu_h;
 import org.wgpu4j.constant.InstanceBackend;
 import org.wgpu4j.constant.InstanceFlag;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 import java.util.Set;
 
 /**
@@ -38,7 +42,6 @@ public class InstanceExtras implements Marshalable {
     public MemorySegment marshal(Arena arena) {
         MemorySegment struct = WGPUInstanceExtras.allocate(arena);
 
-
         MemorySegment chain = WGPUInstanceExtras.chain(struct);
         WGPUChainedStruct.next(chain, MemorySegment.NULL);
         WGPUChainedStruct.sType(chain, wgpu_h.WGPUSType_InstanceExtras());
@@ -50,22 +53,15 @@ public class InstanceExtras implements Marshalable {
         }
         WGPUInstanceExtras.backends(struct, backendFlags);
 
-
         int instanceFlags = 0;
         for (InstanceFlag flag : flags) {
             instanceFlags |= flag.getValue();
         }
         WGPUInstanceExtras.flags(struct, instanceFlags);
 
-
         WGPUInstanceExtras.dx12ShaderCompiler(struct, wgpu_h.WGPUDx12Compiler_Dxc());
         WGPUInstanceExtras.gles3MinorVersion(struct, wgpu_h.WGPUGles3MinorVersion_Automatic());
         WGPUInstanceExtras.glFenceBehaviour(struct, wgpu_h.WGPUGLFenceBehaviour_Normal());
-
-
-        MemorySegment dxilPath = WGPUInstanceExtras.dxilPath(struct);
-        WGPUStringView.data(dxilPath, MemorySegment.NULL);
-        WGPUStringView.length(dxilPath, 0);
 
         MemorySegment dxcPath = WGPUInstanceExtras.dxcPath(struct);
         WGPUStringView.data(dxcPath, MemorySegment.NULL);

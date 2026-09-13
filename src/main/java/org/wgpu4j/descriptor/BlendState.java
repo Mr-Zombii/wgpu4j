@@ -1,11 +1,13 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.bindings.WGPUBlendComponent;
+import org.wgpu4j.bindings.WGPUBlendState;
 import org.wgpu4j.constant.BlendFactor;
 import org.wgpu4j.constant.BlendOperation;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
 /**
  * Configuration for blending operations in a render pipeline.

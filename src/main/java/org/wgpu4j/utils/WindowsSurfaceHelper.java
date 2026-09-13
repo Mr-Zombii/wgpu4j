@@ -1,10 +1,16 @@
 package org.wgpu4j.utils;
 
+import org.lwjgl.system.JNI;
+import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.system.windows.Kernel32;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.bindings.WGPUChainedStruct;
+import org.wgpu4j.bindings.WGPUSurfaceSourceWindowsHWND;
+import org.wgpu4j.bindings.webgpu_h;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
 /**
  * Helper class for creating Windows-specific surface sources for WebGPU.
@@ -55,17 +61,15 @@ public class WindowsSurfaceHelper {
         return surfaceSource;
     }
 
+    private static final long getModuleHandleAddress = Kernel32.getLibrary().getFunctionAddress("GetModuleHandleW");
+
     /**
      * Gets the actual process instance handle using a more robust method.
-     * This is a placeholder for future enhancement - could use JNI to call
-     * GetModuleHandle(NULL) from kernel32.dll for the real process handle.
      *
      * @return The process instance handle
      */
     public static long getCurrentProcessInstance() {
-
-
-        return 0x400000;
+        return JNI.invokePP(MemoryUtil.NULL, getModuleHandleAddress);
     }
 
     /**

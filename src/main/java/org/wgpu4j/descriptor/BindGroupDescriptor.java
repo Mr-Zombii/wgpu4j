@@ -8,8 +8,8 @@ import org.wgpu4j.resource.BindGroupLayout;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class BindGroupDescriptor implements Marshalable {
     private final String label;

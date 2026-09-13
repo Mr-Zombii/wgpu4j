@@ -1,10 +1,15 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.constant.*;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.bindings.WGPUStringView;
+import org.wgpu4j.bindings.WGPUTextureViewDescriptor;
+import org.wgpu4j.bindings.webgpu_h;
+import org.wgpu4j.constant.TextureAspect;
+import org.wgpu4j.constant.TextureFormat;
+import org.wgpu4j.constant.TextureViewDimension;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
 /**
  * Configuration for creating a texture view.

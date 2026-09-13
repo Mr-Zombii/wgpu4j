@@ -1,9 +1,12 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.bindings.WGPUSurfaceConfiguration;
+import org.wgpu4j.constant.CompositeAlphaMode;
+import org.wgpu4j.constant.PresentMode;
+import org.wgpu4j.constant.TextureFormat;
+import org.wgpu4j.constant.TextureUsage;
 import org.wgpu4j.resource.Device;
-import org.wgpu4j.constant.*;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;

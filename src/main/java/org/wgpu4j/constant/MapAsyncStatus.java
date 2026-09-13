@@ -14,7 +14,7 @@ public enum MapAsyncStatus {
     /**
      * WGPU instance was dropped before mapping completed.
      */
-    INSTANCE_DROPPED(webgpu_h.WGPUMapAsyncStatus_InstanceDropped()),
+    CALLBACK_CANCELLED(webgpu_h.WGPUMapAsyncStatus_CallbackCancelled()),
 
     /**
      * Buffer mapping failed with an error.
@@ -24,12 +24,7 @@ public enum MapAsyncStatus {
     /**
      * Buffer mapping operation was aborted.
      */
-    ABORTED(webgpu_h.WGPUMapAsyncStatus_Aborted()),
-
-    /**
-     * Unknown status.
-     */
-    UNKNOWN(webgpu_h.WGPUMapAsyncStatus_Unknown());
+    ABORTED(webgpu_h.WGPUMapAsyncStatus_Aborted());
 
     private final int value;
 

@@ -1,12 +1,13 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.bindings.*;
-import org.wgpu4j.resource.TextureView;
+import org.wgpu4j.bindings.WGPURenderPassDepthStencilAttachment;
 import org.wgpu4j.constant.LoadOp;
 import org.wgpu4j.constant.StoreOp;
+import org.wgpu4j.resource.TextureView;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
 /**
  * Configuration for a depth-stencil attachment in a render pass.

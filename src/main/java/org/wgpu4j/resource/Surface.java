@@ -3,10 +3,12 @@ package org.wgpu4j.resource;
 import org.wgpu4j.WgpuException;
 import org.wgpu4j.WgpuNative;
 import org.wgpu4j.WgpuResource;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.bindings.WGPUSurfaceTexture;
+import org.wgpu4j.bindings.webgpu_h;
 import org.wgpu4j.descriptor.SurfaceConfiguration;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 
 /**
  * Represents a surface that can be rendered to (e.g., a window).

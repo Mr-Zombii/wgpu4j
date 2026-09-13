@@ -1,7 +1,7 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.bindings.WGPUTexelCopyBufferInfo;
 import org.wgpu4j.resource.Buffer;
 
 import java.lang.foreign.Arena;

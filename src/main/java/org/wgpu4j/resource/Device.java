@@ -5,20 +5,15 @@ import org.slf4j.LoggerFactory;
 import org.wgpu4j.WgpuException;
 import org.wgpu4j.WgpuNative;
 import org.wgpu4j.WgpuResource;
-import org.wgpu4j.descriptor.TextureDescriptor;
-import org.wgpu4j.descriptor.ShaderModuleDescriptor;
-import org.wgpu4j.descriptor.RenderPipelineDescriptor;
-import org.wgpu4j.descriptor.ComputePipelineDescriptor;
-import org.wgpu4j.descriptor.BufferDescriptor;
-import org.wgpu4j.descriptor.BindGroupLayoutDescriptor;
-import org.wgpu4j.descriptor.BindGroupDescriptor;
-import org.wgpu4j.descriptor.SamplerDescriptor;
-import org.wgpu4j.descriptor.PipelineLayoutDescriptor;
-import org.wgpu4j.descriptor.QuerySetDescriptor;
+import org.wgpu4j.bindings.WGPUPopErrorScopeCallback;
+import org.wgpu4j.bindings.WGPUPopErrorScopeCallbackInfo;
+import org.wgpu4j.bindings.WGPUStringView;
+import org.wgpu4j.bindings.webgpu_h;
 import org.wgpu4j.constant.ErrorFilter;
-import org.wgpu4j.bindings.*;
+import org.wgpu4j.descriptor.*;
 
-import java.lang.foreign.*;
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 import java.util.concurrent.CompletableFuture;
 
 /**
