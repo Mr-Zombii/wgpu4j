@@ -18,11 +18,11 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v4
 
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v4
+      - name: Set up JDK 22
+        uses: actions/setup-java@v6
         with:
           distribution: 'adopt'
-          java-version: '8'
+          java-version: '22'
 
       - name: Extract latest commit message and hash
         run: |
@@ -38,7 +38,9 @@ jobs:
         env:
           GITHUB_EVENT_RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          bash ./gradlew build
+          bash ./gradlew downloadJextract
+          bash ./gradlew downloadWgpuNative
+          bash ./gradlew generateBindings
           bash ./gradlew publishToMavenLocal
 
       - name: Extract artifactId, groupId, version from generated POM file
