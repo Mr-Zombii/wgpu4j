@@ -69,7 +69,8 @@ public class Buffer extends WgpuResource {
 
         CompletableFuture<Void> future = new CompletableFuture<>();
 
-        try (Arena arena = Arena.ofConfined()) {
+        try {
+            Arena arena = Arena.ofShared();
             MemorySegment callback = createMapCallback(arena, future);
 
             MemorySegment callbackInfo = WGPUBufferMapCallbackInfo.allocate(arena);
@@ -81,7 +82,6 @@ public class Buffer extends WgpuResource {
 
             MemorySegment futureHandle = webgpu_h.wgpuBufferMapAsync(
                     arena, handle, mode, offset, size, callbackInfo);
-
 
         } catch (Exception e) {
             future.completeExceptionally(new WgpuException("Failed to start buffer mapping", e));
@@ -198,6 +198,8 @@ public class Buffer extends WgpuResource {
                 }
             } catch (Exception e) {
                 future.completeExceptionally(new WgpuException("Error in buffer map callback", e));
+            } finally {
+                arena.close();
             }
         }, arena);
     }

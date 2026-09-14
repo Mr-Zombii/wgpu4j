@@ -1,10 +1,10 @@
 package org.wgpu4j.descriptor;
 
 import org.wgpu4j.Marshalable;
-import org.wgpu4j.bindings.WGPUDeviceDescriptor;
-import org.wgpu4j.bindings.WGPUQueueDescriptor;
-import org.wgpu4j.bindings.WGPUStringView;
+import org.wgpu4j.bindings.*;
+import org.wgpu4j.constant.DeviceLostReason;
 import org.wgpu4j.constant.FeatureName;
+import org.wgpu4j.constant.RequestDeviceStatus;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
@@ -21,12 +21,27 @@ public class DeviceDescriptor implements Marshalable {
     private final List<FeatureName> requiredFeatures;
     private final QueueDescriptor defaultQueue;
     private final Limits requiredLimits;
+    private final DeviceLostCallback lostCallback;
+    private final UncapturedErrorCallback uncapturedErrorCallback;
 
-    private DeviceDescriptor(String label, List<FeatureName> requiredFeatures, QueueDescriptor defaultQueue, Limits requiredLimits) {
+    private DeviceDescriptor(
+            String label, List<FeatureName> requiredFeatures, QueueDescriptor defaultQueue,
+            Limits requiredLimits, DeviceLostCallback lostCallback, UncapturedErrorCallback uncapturedErrorCallback
+    ) {
         this.label = label;
         this.requiredFeatures = new ArrayList<>(requiredFeatures);
         this.defaultQueue = defaultQueue;
         this.requiredLimits = requiredLimits;
+        this.lostCallback = lostCallback;
+        this.uncapturedErrorCallback = uncapturedErrorCallback;
+    }
+
+    public DeviceLostCallback getLostCallback() {
+        return lostCallback;
+    }
+
+    public UncapturedErrorCallback getUncapturedErrorCallback() {
+        return uncapturedErrorCallback;
     }
 
     public String getLabel() {
@@ -85,17 +100,77 @@ public class DeviceDescriptor implements Marshalable {
             WGPUDeviceDescriptor.requiredLimits(struct, MemorySegment.NULL);
         }
 
-        MemorySegment queueStruct = defaultQueue.marshal(arena);
-        MemorySegment defaultQueueField = WGPUDeviceDescriptor.defaultQueue(struct);
-        MemorySegment.copy(queueStruct, 0L, defaultQueueField, 0L, WGPUQueueDescriptor.sizeof());
-
         MemorySegment deviceLostCallbackInfo = WGPUDeviceDescriptor.deviceLostCallbackInfo(struct);
         deviceLostCallbackInfo.fill((byte) 0);
+        if (lostCallback != null) {
+            WGPUDeviceLostCallbackInfo.mode(deviceLostCallbackInfo, webgpu_h.WGPUCallbackMode_AllowProcessEvents());
+
+            WGPUDeviceLostCallback.Function function = new WGPUDeviceLostCallback.Function() {
+                @Override
+                public void apply(
+                        MemorySegment device, int reason,
+                        MemorySegment message, MemorySegment userdata1,
+                        MemorySegment userdata2
+                ) {
+                    String strMessage = extractStringView(message);
+                    lostCallback.onLost(DeviceLostReason.fromValue(reason), strMessage);
+                }
+            };
+
+            MemorySegment callback = WGPUDeviceLostCallback.allocate(function, arena);
+            WGPUDeviceLostCallbackInfo.callback(deviceLostCallbackInfo, callback);
+        }
 
         MemorySegment uncapturedErrorCallbackInfo = WGPUDeviceDescriptor.uncapturedErrorCallbackInfo(struct);
         uncapturedErrorCallbackInfo.fill((byte) 0);
 
+        if (uncapturedErrorCallback != null) {
+            WGPUUncapturedErrorCallback.Function function = new WGPUUncapturedErrorCallback.Function() {
+                @Override
+                public void apply(
+                        MemorySegment device, int type,
+                        MemorySegment message, MemorySegment userdata1,
+                        MemorySegment userdata2
+                ) {
+                    String strMessage = extractStringView(message);
+                    uncapturedErrorCallback.onError(RequestDeviceStatus.fromValue(type), strMessage);
+                }
+            };
+
+            MemorySegment callback = WGPUUncapturedErrorCallback.allocate(function, arena);
+            WGPUUncapturedErrorCallbackInfo.callback(uncapturedErrorCallbackInfo, callback);
+        }
+
+        MemorySegment queueStruct = defaultQueue.marshal(arena);
+        MemorySegment defaultQueueField = WGPUDeviceDescriptor.defaultQueue(struct);
+        MemorySegment.copy(queueStruct, 0L, defaultQueueField, 0L, WGPUQueueDescriptor.sizeof());
+
         return struct;
+    }
+
+    /**
+     * Extracts a Java string from a WGPUStringView.
+     */
+    private String extractStringView(MemorySegment stringView) {
+        try {
+            if (stringView.equals(MemorySegment.NULL)) {
+                return "";
+            }
+
+            MemorySegment dataPtr = WGPUStringView.data(stringView);
+            long length = WGPUStringView.length(stringView);
+
+            if (dataPtr.equals(MemorySegment.NULL) || length <= 0) {
+                return "";
+            }
+
+            // Check if the data pointer can be safely read
+            MemorySegment validatedPtr = dataPtr.reinterpret(length);
+            return validatedPtr.getString(0, java.nio.charset.StandardCharsets.UTF_8);
+
+        } catch (Exception e) {
+            return "Error reading message: " + e.getMessage();
+        }
     }
 
     public static Builder builder() {
@@ -107,9 +182,21 @@ public class DeviceDescriptor implements Marshalable {
         private List<FeatureName> requiredFeatures = new ArrayList<>();
         private QueueDescriptor defaultQueue = QueueDescriptor.builder().build();
         private Limits requiredLimits = null;
+        private DeviceLostCallback lostCallback = (reason, message) -> {};
+        private UncapturedErrorCallback uncapturedErrorCallback = (reason, message) -> {};
 
         public Builder label(String label) {
             this.label = label;
+            return this;
+        }
+
+        public Builder lostCallback(DeviceLostCallback lostCallback) {
+            this.lostCallback = lostCallback;
+            return this;
+        }
+
+        public Builder errorCallback(UncapturedErrorCallback errorCallback) {
+            this.uncapturedErrorCallback = errorCallback;
             return this;
         }
 
@@ -135,7 +222,21 @@ public class DeviceDescriptor implements Marshalable {
         }
 
         public DeviceDescriptor build() {
-            return new DeviceDescriptor(label, requiredFeatures, defaultQueue, requiredLimits);
+            return new DeviceDescriptor(label, requiredFeatures, defaultQueue, requiredLimits, lostCallback, uncapturedErrorCallback);
         }
     }
+
+    // https://doc.qu1x.dev/bevy_trackball/wgpu/struct.Device.html#method.set_device_lost_callback
+    public interface DeviceLostCallback {
+
+        void onLost(DeviceLostReason reason, String message);
+
+    }
+
+    public interface UncapturedErrorCallback {
+
+        void onError(RequestDeviceStatus requestDeviceStatus, String strMessage);
+
+    }
+
 }
