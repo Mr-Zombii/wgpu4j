@@ -27,6 +27,8 @@ public class RenderPipelineDescriptor implements Marshalable {
     private final DepthStencilState depthStencilState;
     private final MultisampleState multisampleState;
     private final List<ColorTargetState> colorTargets;
+    private List<ConstantEntry> fragmentConstants = new ArrayList<>();
+    private List<ConstantEntry> vertexConstants = new ArrayList<>();
 
     private RenderPipelineDescriptor(Builder builder) {
         this.label = builder.label;
@@ -40,10 +42,20 @@ public class RenderPipelineDescriptor implements Marshalable {
         this.depthStencilState = builder.depthStencilState;
         this.multisampleState = builder.multisampleState;
         this.colorTargets = new ArrayList<>(builder.colorTargets);
+        this.fragmentConstants.addAll(builder.fragmentConstants);
+        this.vertexConstants.addAll(builder.vertexConstants);
     }
 
     public String getLabel() {
         return label;
+    }
+
+    public List<ConstantEntry> getFragmentConstants() {
+        return fragmentConstants;
+    }
+
+    public List<ConstantEntry> getVertexConstants() {
+        return vertexConstants;
     }
 
     public PipelineLayout getPipelineLayout() {
@@ -152,8 +164,17 @@ public class RenderPipelineDescriptor implements Marshalable {
         WGPUStringView.data(entryPointView, entryPointData);
         WGPUStringView.length(entryPointView, vertexEntryPoint.length());
 
-        WGPUVertexState.constantCount(vertexState, 0);
-        WGPUVertexState.constants(vertexState, MemorySegment.NULL);
+        WGPUVertexState.constantCount(vertexState, vertexConstants.size());
+        if (!vertexConstants.isEmpty()) {
+            MemorySegment constantsArray = WGPUConstantEntry.allocateArray(vertexConstants.size(), arena);
+            for (int i = 0; i < vertexConstants.size(); i++) {
+                MemorySegment constantStruct = WGPUConstantEntry.asSlice(constantsArray, i);
+                vertexConstants.get(i).marshal(arena, constantStruct);
+            }
+            WGPUVertexState.constants(vertexState, constantsArray);
+        } else {
+            WGPUVertexState.constants(vertexState, MemorySegment.NULL);
+        }
 
         WGPUVertexState.bufferCount(vertexState, vertexBuffers.size());
 
@@ -181,8 +202,17 @@ public class RenderPipelineDescriptor implements Marshalable {
         WGPUStringView.data(entryPointView, entryPointData);
         WGPUStringView.length(entryPointView, fragmentEntryPoint.length());
 
-        WGPUFragmentState.constantCount(fragmentState, 0);
-        WGPUFragmentState.constants(fragmentState, MemorySegment.NULL);
+        WGPUFragmentState.constantCount(fragmentState, fragmentConstants.size());
+        if (!fragmentConstants.isEmpty()) {
+            MemorySegment constantsArray = WGPUConstantEntry.allocateArray(fragmentConstants.size(), arena);
+            for (int i = 0; i < fragmentConstants.size(); i++) {
+                MemorySegment constantStruct = WGPUConstantEntry.asSlice(constantsArray, i);
+                fragmentConstants.get(i).marshal(arena, constantStruct);
+            }
+            WGPUFragmentState.constants(fragmentState, constantsArray);
+        } else {
+            WGPUFragmentState.constants(fragmentState, MemorySegment.NULL);
+        }
 
         if (!colorTargets.isEmpty()) {
             MemorySegment targetArray = WGPUColorTargetState.allocateArray(colorTargets.size(), arena);
@@ -212,11 +242,13 @@ public class RenderPipelineDescriptor implements Marshalable {
         private String vertexEntryPoint = "vs_main";
         private ShaderModule fragmentShader;
         private String fragmentEntryPoint = "fs_main";
-        private List<VertexBufferLayout> vertexBuffers = new ArrayList<>();
+        private final List<VertexBufferLayout> vertexBuffers = new ArrayList<>();
         private PrimitiveState primitiveState = PrimitiveState.builder().build();
         private DepthStencilState depthStencilState;
         private MultisampleState multisampleState = MultisampleState.builder().build();
-        private List<ColorTargetState> colorTargets = new ArrayList<>();
+        private final List<ColorTargetState> colorTargets = new ArrayList<>();
+        private final List<ConstantEntry> fragmentConstants = new ArrayList<>();
+        private final List<ConstantEntry> vertexConstants = new ArrayList<>();
 
         public Builder label(String label) {
             this.label = label;
@@ -238,6 +270,40 @@ public class RenderPipelineDescriptor implements Marshalable {
             return this;
         }
 
+        /**
+         * Adds a constant to the vertex shader.
+         *
+         * @param name The constant name
+         * @param value The constant value
+         * @return this builder
+         */
+        public Builder vertexConstant(String name, double value) {
+            this.vertexConstants.add(new ConstantEntry(name, value));
+            return this;
+        }
+
+        /**
+         * Adds constants to the vertex shader.
+         *
+         * @param entries The constant entry list
+         * @return this builder
+         */
+        public Builder vertexConstant(ConstantEntry... entries) {
+            this.vertexConstants.addAll(List.of(entries));
+            return this;
+        }
+
+        /**
+         * Adds constants to the vertex shader.
+         *
+         * @param entries The constant entry list
+         * @return this builder
+         */
+        public Builder vertexConstant(List<ConstantEntry> entries) {
+            this.vertexConstants.addAll(entries);
+            return this;
+        }
+
         public Builder fragmentShader(ShaderModule shader) {
             this.fragmentShader = shader;
             return this;
@@ -245,6 +311,40 @@ public class RenderPipelineDescriptor implements Marshalable {
 
         public Builder fragmentEntryPoint(String entryPoint) {
             this.fragmentEntryPoint = entryPoint;
+            return this;
+        }
+
+        /**
+         * Adds a constant to the fragment shader.
+         *
+         * @param name The constant name
+         * @param value The constant value
+         * @return this builder
+         */
+        public Builder fragmentConstant(String name, double value) {
+            this.fragmentConstants.add(new ConstantEntry(name, value));
+            return this;
+        }
+
+        /**
+         * Adds constants to the fragment shader.
+         *
+         * @param entries The constant entry list
+         * @return this builder
+         */
+        public Builder fragmentConstant(ConstantEntry... entries) {
+            this.fragmentConstants.addAll(List.of(entries));
+            return this;
+        }
+
+        /**
+         * Adds constants to the fragment shader.
+         *
+         * @param entries The constant entry list
+         * @return this builder
+         */
+        public Builder fragmentConstant(List<ConstantEntry> entries) {
+            this.fragmentConstants.addAll(entries);
             return this;
         }
 

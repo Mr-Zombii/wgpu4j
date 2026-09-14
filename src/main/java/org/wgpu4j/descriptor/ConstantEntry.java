@@ -55,4 +55,23 @@ public class ConstantEntry implements Marshalable {
 
         return struct;
     }
+
+    public MemorySegment marshal(Arena arena, MemorySegment constantStruct) {
+        WGPUConstantEntry.nextInChain(constantStruct, MemorySegment.NULL);
+
+        if (key != null && !key.isEmpty()) {
+            MemorySegment keyBytes = arena.allocateFrom(key, StandardCharsets.UTF_8);
+            MemorySegment keyStringView = WGPUConstantEntry.key(constantStruct);
+            WGPUStringView.data(keyStringView, keyBytes);
+            WGPUStringView.length(keyStringView, key.length());
+        } else {
+            MemorySegment keyStringView = WGPUConstantEntry.key(constantStruct);
+            WGPUStringView.data(keyStringView, MemorySegment.NULL);
+            WGPUStringView.length(keyStringView, 0);
+        }
+
+        WGPUConstantEntry.value(constantStruct, value);
+
+        return constantStruct;
+    }
 }

@@ -3,6 +3,7 @@ package org.wgpu4j.descriptor;
 import org.wgpu4j.Marshalable;
 import org.wgpu4j.bindings.WGPUComputePipelineDescriptor;
 import org.wgpu4j.bindings.WGPUComputeState;
+import org.wgpu4j.bindings.WGPUConstantEntry;
 import org.wgpu4j.bindings.WGPUStringView;
 import org.wgpu4j.resource.PipelineLayout;
 import org.wgpu4j.resource.ShaderModule;
@@ -10,6 +11,8 @@ import org.wgpu4j.resource.ShaderModule;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Configuration for creating a compute pipeline.
@@ -20,16 +23,22 @@ public class ComputePipelineDescriptor implements Marshalable {
     private final PipelineLayout pipelineLayout;
     private final ShaderModule computeShader;
     private final String entryPoint;
+    private final List<ConstantEntry> constants = new ArrayList<>();
 
     private ComputePipelineDescriptor(Builder builder) {
         this.label = builder.label;
         this.pipelineLayout = builder.pipelineLayout;
         this.computeShader = builder.computeShader;
         this.entryPoint = builder.entryPoint;
+        this.constants.addAll(builder.constants);
     }
 
     public String getLabel() {
         return label;
+    }
+
+    public List<ConstantEntry> getConstants() {
+        return constants;
     }
 
     public PipelineLayout getPipelineLayout() {
@@ -88,8 +97,17 @@ public class ComputePipelineDescriptor implements Marshalable {
         WGPUStringView.data(entryPointView, entryPointData);
         WGPUStringView.length(entryPointView, entryPoint.length());
 
-        WGPUComputeState.constantCount(computeStage, 0);
-        WGPUComputeState.constants(computeStage, MemorySegment.NULL);
+        WGPUComputeState.constantCount(computeStage, constants.size());
+        if (!constants.isEmpty()) {
+            MemorySegment constantsArray = WGPUConstantEntry.allocateArray(constants.size(), arena);
+            for (int i = 0; i < constants.size(); i++) {
+                MemorySegment constantStruct = WGPUConstantEntry.asSlice(constantsArray, i);
+                constants.get(i).marshal(arena, constantStruct);
+            }
+            WGPUComputeState.constants(computeStage, constantsArray);
+        } else {
+            WGPUComputeState.constants(computeStage, MemorySegment.NULL);
+        }
     }
 
     public static Builder builder() {
@@ -101,6 +119,41 @@ public class ComputePipelineDescriptor implements Marshalable {
         private PipelineLayout pipelineLayout;
         private ShaderModule computeShader;
         private String entryPoint = "main";
+        private List<ConstantEntry> constants = new ArrayList<>();
+
+        /**
+         * Adds a constant to the compute shader.
+         *
+         * @param name The constant name
+         * @param value The constant value
+         * @return this builder
+         */
+        public Builder constant(String name, double value) {
+            this.constants.add(new ConstantEntry(name, value));
+            return this;
+        }
+
+        /**
+         * Adds constants to the compute shader.
+         *
+         * @param entries The constant entry list
+         * @return this builder
+         */
+        public Builder constant(ConstantEntry... entries) {
+            this.constants.addAll(List.of(entries));
+            return this;
+        }
+
+        /**
+         * Adds constants to the compute shader.
+         *
+         * @param entries The constant entry list
+         * @return this builder
+         */
+        public Builder constant(List<ConstantEntry> entries) {
+            this.constants.addAll(entries);
+            return this;
+        }
 
         /**
          * Sets the debug label for the compute pipeline.
