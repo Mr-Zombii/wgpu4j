@@ -4,7 +4,7 @@ package org.wgpu4j.constant;
  * Shader stage flags that determine which shader stages can access a binding.
  * These flags can be combined using bitwise OR operations.
  */
-public class ShaderStage {
+public class ShaderStage { // WGPUShaderStage
     public static final long NONE = 0x0000000000000000L;
     public static final long VERTEX = 0x0000000000000001L;
     public static final long FRAGMENT = 0x0000000000000002L;

@@ -7,7 +7,8 @@ import org.wgpu4j.bindings.webgpu_h;
  */
 public enum FrontFace {
     UNDEFINED(webgpu_h.WGPUFrontFace_Undefined()),
-    CCW(webgpu_h.WGPUFrontFace_CCW()), CW(webgpu_h.WGPUFrontFace_CW());
+    CCW(webgpu_h.WGPUFrontFace_CCW()),
+    CW(webgpu_h.WGPUFrontFace_CW());
     private final int value;
 
     FrontFace(int value) {

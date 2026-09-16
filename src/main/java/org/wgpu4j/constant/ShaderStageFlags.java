@@ -6,7 +6,7 @@ import java.util.EnumSet;
  * Type-safe shader stage flags for bind group layouts.
  * Can be combined using EnumSet operations.
  */
-public enum ShaderStageFlags { // WGPUShaderStage
+public enum ShaderStageFlags {
     NONE(ShaderStage.NONE),
     VERTEX(ShaderStage.VERTEX),
     FRAGMENT(ShaderStage.FRAGMENT),

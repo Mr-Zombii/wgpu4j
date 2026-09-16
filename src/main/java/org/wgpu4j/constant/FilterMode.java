@@ -6,6 +6,12 @@ import org.wgpu4j.bindings.webgpu_h;
  * Filtering mode for texture sampling.
  */
 public enum FilterMode {
+
+    /**
+     * Undefined
+     */
+    UNDEFINED(webgpu_h.WGPUFilterMode_Undefined()),
+
     /**
      * Nearest neighbor filtering.
      * Returns the value of the texel nearest to the texture coordinate.

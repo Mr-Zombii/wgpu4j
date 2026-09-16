@@ -4,16 +4,16 @@ package org.wgpu4j.constant;
  * WebGPU backend selection flags.
  * Based on WGPUInstanceBackend from wgpu.h
  */
-public enum InstanceBackend {
+public enum InstanceBackend { // WGPUInstanceBackend
     ALL(0x00000000),
     VULKAN(1 << 0),
     GL(1 << 1),
     METAL(1 << 2),
     DX12(1 << 3),
-    DX11(1 << 4),
+//    DX11(1 << 4), // was removed from the header
     BROWSER_WEBGPU(1 << 5),
     PRIMARY((1 << 0) | (1 << 2) | (1 << 3) | (1 << 5)),
-    SECONDARY((1 << 1) | (1 << 4));
+    SECONDARY((1 << 1));
 
     private final int value;
 

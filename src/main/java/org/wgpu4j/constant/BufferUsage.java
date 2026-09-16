@@ -4,7 +4,7 @@ package org.wgpu4j.constant;
  * Buffer usage flags that determine how a buffer can be used in the graphics pipeline.
  * These flags can be combined using bitwise OR operations.
  */
-public class BufferUsage {
+public class BufferUsage { // WGPUBufferUsage
     public static final long NONE = 0x0000000000000000L;
     public static final long MAP_READ = 0x0000000000000001L;
     public static final long MAP_WRITE = 0x0000000000000002L;

@@ -6,6 +6,12 @@ import org.wgpu4j.bindings.webgpu_h;
  * Filtering mode for mipmap level selection.
  */
 public enum MipmapFilterMode {
+
+    /**
+     * Undefined
+     */
+    UNDEFINED(webgpu_h.WGPUMipmapFilterMode_Undefined()),
+
     /**
      * Nearest mipmap level selection.
      * Uses the mipmap level closest to the computed level of detail.

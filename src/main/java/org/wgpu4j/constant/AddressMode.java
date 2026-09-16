@@ -6,6 +6,12 @@ import org.wgpu4j.bindings.webgpu_h;
  * Address mode for texture coordinates outside the [0, 1] range.
  */
 public enum AddressMode {
+
+    /**
+     * Undefined
+     */
+    UNDEFINED(webgpu_h.WGPUAddressMode_Undefined()),
+
     /**
      * Clamp texture coordinates to the edge.
      * Coordinates outside [0, 1] will use the edge pixel.

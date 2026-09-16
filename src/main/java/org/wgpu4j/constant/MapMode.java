@@ -4,7 +4,7 @@ package org.wgpu4j.constant;
  * Buffer mapping access modes.
  * These flags can be combined using bitwise OR operations.
  */
-public class MapMode {
+public class MapMode { // WGPUMapMode
     public static final long NONE = 0x0000000000000000L;
     public static final long READ = 0x0000000000000001L;
     public static final long WRITE = 0x0000000000000002L;
