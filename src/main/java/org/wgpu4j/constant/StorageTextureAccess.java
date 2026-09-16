@@ -9,7 +9,8 @@ public enum StorageTextureAccess {
     UNDEFINED(webgpu_h.WGPUStorageTextureAccess_Undefined()),
     WRITE_ONLY(webgpu_h.WGPUStorageTextureAccess_WriteOnly()),
     READ_ONLY(webgpu_h.WGPUStorageTextureAccess_ReadOnly()),
-    READ_WRITE(webgpu_h.WGPUStorageTextureAccess_ReadWrite());
+    READ_WRITE(webgpu_h.WGPUStorageTextureAccess_ReadWrite()),
+    BINDING_NOT_USED(webgpu_h.WGPUStorageTextureAccess_BindingNotUsed());
 
     private final int value;
 

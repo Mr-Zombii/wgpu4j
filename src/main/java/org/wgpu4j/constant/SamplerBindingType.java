@@ -6,6 +6,10 @@ import org.wgpu4j.bindings.webgpu_h;
  * Type of sampler binding in a bind group layout.
  */
 public enum SamplerBindingType {
+
+    BINDING_NOT_USED(webgpu_h.WGPUSamplerBindingType_BindingNotUsed()),
+    UNDEFINED(webgpu_h.WGPUSamplerBindingType_Undefined()),
+
     /**
      * Filtering sampler that can use linear interpolation.
      * Most common sampler type for textures.

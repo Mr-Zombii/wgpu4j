@@ -5,6 +5,7 @@ import org.wgpu4j.WgpuNative;
 import org.wgpu4j.WgpuResource;
 import org.wgpu4j.bindings.WGPUSurfaceTexture;
 import org.wgpu4j.bindings.webgpu_h;
+import org.wgpu4j.constant.SurfaceTextureStatus;
 import org.wgpu4j.descriptor.SurfaceConfiguration;
 
 import java.lang.foreign.Arena;
@@ -68,10 +69,10 @@ public class Surface extends WgpuResource {
             webgpu_h.wgpuSurfaceGetCurrentTexture(handle, surfaceTexture);
 
             MemorySegment textureHandle = WGPUSurfaceTexture.texture(surfaceTexture);
-            int status = WGPUSurfaceTexture.status(surfaceTexture);
+            SurfaceTextureStatus status = SurfaceTextureStatus.fromValue(WGPUSurfaceTexture.status(surfaceTexture));
 
             if (textureHandle.equals(MemorySegment.NULL)) {
-                throw new WgpuException("Failed to get current surface texture, status: " + status);
+                return new SurfaceTexture(null, status);
             }
 
             Texture texture = new Texture(textureHandle);
@@ -110,9 +111,9 @@ public class Surface extends WgpuResource {
      */
     public static class SurfaceTexture {
         private final Texture texture;
-        private final int status;
+        private final SurfaceTextureStatus status;
 
-        public SurfaceTexture(Texture texture, int status) {
+        public SurfaceTexture(Texture texture, SurfaceTextureStatus status) {
             this.texture = texture;
             this.status = status;
         }
@@ -127,7 +128,7 @@ public class Surface extends WgpuResource {
         /**
          * Gets the status of obtaining this texture.
          */
-        public int getStatus() {
+        public SurfaceTextureStatus getStatus() {
             return status;
         }
 
@@ -135,8 +136,8 @@ public class Surface extends WgpuResource {
          * Returns true if the texture was obtained successfully.
          */
         public boolean isSuccess() {
-            return status == webgpu_h.WGPUSurfaceGetCurrentTextureStatus_SuccessOptimal() ||
-                    status == webgpu_h.WGPUSurfaceGetCurrentTextureStatus_SuccessSuboptimal();
+            return status == SurfaceTextureStatus.SUCCESS_OPTIMAL
+                    || status == SurfaceTextureStatus.SUCCESS_SUB_OPTIMAL;
         }
     }
 }

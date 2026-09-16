@@ -4,13 +4,14 @@ package org.wgpu4j.constant;
  * Texture usage flags that determine how a texture can be used in the graphics pipeline.
  * These flags can be combined using bitwise OR operations.
  */
-public class TextureUsage {
+public class TextureUsage { // WGPUTextureUsage https://docs.rs/wgpu/latest/wgpu/struct.TextureUsages.html
     public static final long NONE = 0x0000000000000000L;
     public static final long COPY_SRC = 0x0000000000000001L;
     public static final long COPY_DST = 0x0000000000000002L;
     public static final long TEXTURE_BINDING = 0x0000000000000004L;
     public static final long STORAGE_BINDING = 0x0000000000000008L;
     public static final long RENDER_ATTACHMENT = 0x0000000000000010L;
+    public static final long TRANSIENT_ATTACHMENT = 0x0000000000000020L;
 
     private TextureUsage() {
     }

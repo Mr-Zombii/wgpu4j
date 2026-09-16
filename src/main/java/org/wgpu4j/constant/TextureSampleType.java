@@ -7,6 +7,10 @@ import org.wgpu4j.bindings.webgpu_h;
  * Defines how the texture data should be interpreted when sampled.
  */
 public enum TextureSampleType {
+
+    BINDING_NOT_USED(webgpu_h.WGPUTextureSampleType_BindingNotUsed()),
+    UNDEFINED(webgpu_h.WGPUTextureSampleType_Undefined()),
+
     /**
      * Floating-point texture data.
      * Most common texture sample type for color textures.
@@ -14,16 +18,10 @@ public enum TextureSampleType {
     FLOAT(webgpu_h.WGPUTextureSampleType_Float()),
 
     /**
-     * Unsigned integer texture data.
-     * Used for textures containing integer values.
+     * Unfilterable floating-point data.
+     * Float data that cannot be linearly filtered.
      */
-    UINT(webgpu_h.WGPUTextureSampleType_Uint()),
-
-    /**
-     * Signed integer texture data.
-     * Used for textures containing signed integer values.
-     */
-    SINT(webgpu_h.WGPUTextureSampleType_Sint()),
+    UNFILTERABLE_FLOAT(webgpu_h.WGPUTextureSampleType_UnfilterableFloat()),
 
     /**
      * Depth texture data for comparison operations.
@@ -32,10 +30,16 @@ public enum TextureSampleType {
     DEPTH(webgpu_h.WGPUTextureSampleType_Depth()),
 
     /**
-     * Unfilterable floating-point data.
-     * Float data that cannot be linearly filtered.
+     * Signed integer texture data.
+     * Used for textures containing signed integer values.
      */
-    UNFILTERABLE_FLOAT(webgpu_h.WGPUTextureSampleType_UnfilterableFloat());
+    SINT(webgpu_h.WGPUTextureSampleType_Sint()),
+
+    /**
+     * Unsigned integer texture data.
+     * Used for textures containing integer values.
+     */
+    UINT(webgpu_h.WGPUTextureSampleType_Uint());
 
     private final int value;
 

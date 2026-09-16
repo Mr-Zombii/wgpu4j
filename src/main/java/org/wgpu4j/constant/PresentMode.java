@@ -6,6 +6,12 @@ import org.wgpu4j.bindings.webgpu_h;
  * Present mode for surface presentation.
  */
 public enum PresentMode {
+
+    /**
+     * Undefined
+     */
+    UNDEFINED(webgpu_h.WGPUPresentMode_Undefined()),
+
     /**
      * VSync enabled - waits for vertical blanking.
      * Guaranteed to be supported on all platforms.

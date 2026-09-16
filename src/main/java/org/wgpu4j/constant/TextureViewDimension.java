@@ -7,6 +7,12 @@ import org.wgpu4j.bindings.webgpu_h;
  * Defines how the texture data is interpreted (1D, 2D, 3D, cube maps, arrays).
  */
 public enum TextureViewDimension {
+
+    /**
+     * Undefined
+     */
+    UNDEFINED(webgpu_h.WGPUTextureViewDimension_Undefined()),
+
     /**
      * 1D texture view.
      */

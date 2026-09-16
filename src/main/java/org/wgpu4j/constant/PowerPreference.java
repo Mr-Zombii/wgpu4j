@@ -1,5 +1,7 @@
 package org.wgpu4j.constant;
 
+import org.wgpu4j.bindings.wgpu_h;
+
 /**
  * Preference for power vs performance when selecting a graphics adapter.
  */
@@ -7,17 +9,17 @@ public enum PowerPreference {
     /**
      * No preference specified
      */
-    UNDEFINED(0),
+    UNDEFINED(wgpu_h.WGPUPowerPreference_Undefined()),
 
     /**
      * Prefer low power consumption (integrated GPU)
      */
-    LOW_POWER(1),
+    LOW_POWER(wgpu_h.WGPUPowerPreference_LowPower()),
 
     /**
      * Prefer high performance (discrete GPU)
      */
-    HIGH_PERFORMANCE(2);
+    HIGH_PERFORMANCE(wgpu_h.WGPUPowerPreference_HighPerformance());
 
     private final int value;
 
