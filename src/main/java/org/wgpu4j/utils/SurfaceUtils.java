@@ -68,7 +68,7 @@ public class SurfaceUtils {
                             long waylandWindow = GLFWNativeWayland.glfwGetWaylandWindow(glfwWindow);
                             long waylandDisplay = GLFWNativeWayland.glfwGetWaylandDisplay();
 
-                            surfaceSource = LinuxSurfaceHelper.createX11SurfaceSource(arena, waylandWindow, waylandDisplay);
+                            surfaceSource = LinuxSurfaceHelper.createWaylandSurfaceSource(arena, waylandWindow, waylandDisplay);
                         } catch (Exception e) {
                             throw new WgpuException("Failed to get Wayland window handle from GLFW", e);
                         }
