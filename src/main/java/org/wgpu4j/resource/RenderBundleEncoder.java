@@ -4,6 +4,7 @@ import org.wgpu4j.WgpuException;
 import org.wgpu4j.WgpuNative;
 import org.wgpu4j.WgpuResource;
 import org.wgpu4j.bindings.webgpu_h;
+import org.wgpu4j.bindings.wgpu_h;
 import org.wgpu4j.constant.IndexFormat;
 import org.wgpu4j.descriptor.RenderBundleDescriptor;
 
@@ -201,6 +202,34 @@ public class RenderBundleEncoder extends WgpuResource {
      */
     public void drawIndexed(int indexCount, int instanceCount) {
         drawIndexed(indexCount, instanceCount, 0, 0, 0);
+    }
+
+    /**
+     * Records an indirect draw command.
+     *
+     * @param indirectBuffer Indirect draw data
+     * @param offset Offset into buffer
+     */
+    public void drawIndirect(Buffer indirectBuffer, long offset) {
+        try {
+            webgpu_h.wgpuRenderBundleEncoderDrawIndirect(handle, indirectBuffer.getHandle(), offset);
+        } catch (Exception e) {
+            throw new WgpuException("Failed to record indirect draw command", e);
+        }
+    }
+
+    /**
+     * Records an indexed indirect draw command.
+     *
+     * @param indirectBuffer Indirect draw data
+     * @param offset Offset into buffer
+     */
+    public void drawIndexedIndirect(Buffer indirectBuffer, long offset) {
+        try {
+            webgpu_h.wgpuRenderBundleEncoderDrawIndexedIndirect(handle, indirectBuffer.getHandle(), offset);
+        } catch (Exception e) {
+            throw new WgpuException("Failed to record indirect draw command", e);
+        }
     }
 
     /**

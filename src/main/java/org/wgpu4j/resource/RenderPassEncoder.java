@@ -5,6 +5,7 @@ import org.wgpu4j.WgpuNative;
 import org.wgpu4j.WgpuResource;
 import org.wgpu4j.bindings.WGPUColor;
 import org.wgpu4j.bindings.webgpu_h;
+import org.wgpu4j.bindings.wgpu_h;
 import org.wgpu4j.constant.IndexFormat;
 
 import java.lang.foreign.Arena;
@@ -144,6 +145,64 @@ public class RenderPassEncoder extends WgpuResource {
      */
     public void drawIndexed(int indexCount, int instanceCount) {
         drawIndexed(indexCount, instanceCount, 0, 0, 0);
+    }
+
+    /**
+     * Records an indirect draw command.
+     *
+     * @param indirectBuffer Indirect draw data
+     * @param offset Offset into buffer
+     */
+    public void drawIndirect(Buffer indirectBuffer, long offset) {
+        try {
+            webgpu_h.wgpuRenderPassEncoderDrawIndirect(handle, indirectBuffer.getHandle(), offset);
+        } catch (Exception e) {
+            throw new WgpuException("Failed to record indirect draw command", e);
+        }
+    }
+
+    /**
+     * Records an indexed indirect command.
+     *
+     * @param indirectBuffer Indirect draw data
+     * @param offset Offset into buffer
+     */
+    public void drawIndexedIndirect(Buffer indirectBuffer, long offset) {
+        try {
+            webgpu_h.wgpuRenderPassEncoderDrawIndexedIndirect(handle, indirectBuffer.getHandle(), offset);
+        } catch (Exception e) {
+            throw new WgpuException("Failed to record indirect draw command", e);
+        }
+    }
+
+    /**
+     * Records a multi draw indirect command.
+     *
+     * @param indirectBuffer Indirect draw data
+     * @param offset Offset into buffer
+     * @param count Maximum draws
+     */
+    public void multiDrawIndirect(Buffer indirectBuffer, long offset, int count) {
+        try {
+            wgpu_h.wgpuRenderPassEncoderMultiDrawIndirect(handle, indirectBuffer.getHandle(), offset, count);
+        } catch (Exception e) {
+            throw new WgpuException("Failed to record indirect draw command", e);
+        }
+    }
+
+    /**
+     * Records a multi draw indirect indexed command.
+     *
+     * @param indirectBuffer Indirect draw data
+     * @param offset Offset into buffer
+     * @param count Maximum draws
+     */
+    public void multiDrawIndexedIndirect(Buffer indirectBuffer, long offset, int count) {
+        try {
+            wgpu_h.wgpuRenderPassEncoderMultiDrawIndexedIndirect(handle, indirectBuffer.getHandle(), offset, count);
+        } catch (Exception e) {
+            throw new WgpuException("Failed to record indirect draw command", e);
+        }
     }
 
     /**
