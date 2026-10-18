@@ -14,7 +14,7 @@ public class LinuxSurfaceHelper {
     private static final Logger logger = LoggerFactory.getLogger(LinuxSurfaceHelper.class);
 
     /**
-     * Creates an X11 surface source for Linux platforms.
+     * Creates an Android surface source for Linux platforms.
      *
      * @param arena      The memory arena to allocate in
      * @param nativeSurface The Android window handle
