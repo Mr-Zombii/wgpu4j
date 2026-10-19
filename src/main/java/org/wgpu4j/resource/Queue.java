@@ -88,6 +88,30 @@ public class Queue extends WgpuResource {
     }
 
     /**
+     * Writes data to a buffer on the GPU.
+     *
+     * @param buffer       The buffer to write to
+     * @param bufferOffset The offset in the buffer to start writing at
+     * @param data         The data to write
+     * @param dataOffset   The offset into the data
+     * @param dataSize     The amount of data to write
+     */
+    public void writeBuffer(Buffer buffer, long bufferOffset, byte[] data, int dataOffset, int dataSize) {
+        checkNotClosed();
+        if (buffer.isClosed()) {
+            throw new WgpuException("Cannot write to closed buffer");
+        }
+
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment dataSegment = arena.allocate(dataSize);
+            MemorySegment.copy(data, dataOffset, dataSegment, ValueLayout.JAVA_BYTE, 0, dataSize);
+            webgpu_h.wgpuQueueWriteBuffer(handle, buffer.getHandle(), bufferOffset, dataSegment, dataSize);
+        } catch (Exception e) {
+            throw new WgpuException("Failed to write buffer", e);
+        }
+    }
+
+    /**
      * Writes data to a texture on the GPU.
      *
      * @param destination The texture destination descriptor
