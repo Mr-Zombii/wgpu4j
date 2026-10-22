@@ -105,7 +105,7 @@ public class Queue extends WgpuResource {
 
         try (Arena arena = Arena.ofConfined()) {
             MemorySegment dataSegment = arena.allocate(data.byteSize());
-            MemorySegment.copy(data, 0, dataSegment, ValueLayout.JAVA_BYTE, 0, (int)data.byteSize());
+            MemorySegment.copy(data, 0, dataSegment, 0, data.byteSize());
             webgpu_h.wgpuQueueWriteBuffer(handle, buffer.getHandle(), bufferOffset, dataSegment, (int)data.byteSize());
         } catch (Exception e) {
             throw new WgpuException("Failed to write buffer", e);
@@ -167,7 +167,7 @@ public class Queue extends WgpuResource {
             MemorySegment writeSizeStruct = writeSize.marshal(arena);
 
             MemorySegment dataSegment = arena.allocate(data.byteSize());
-            MemorySegment.copy(data, 0, dataSegment, ValueLayout.JAVA_BYTE, 0, (int)data.byteSize());
+            MemorySegment.copy(data, 0, dataSegment, 0, data.byteSize());
 
             webgpu_h.wgpuQueueWriteTexture(
                     handle,
