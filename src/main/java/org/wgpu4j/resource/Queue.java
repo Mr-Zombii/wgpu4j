@@ -11,6 +11,7 @@ import org.wgpu4j.descriptor.ImageCopyTextureLayout;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -73,18 +74,7 @@ public class Queue extends WgpuResource {
      * @param data         The data to write
      */
     public void writeBuffer(Buffer buffer, long bufferOffset, byte[] data) {
-        checkNotClosed();
-        if (buffer.isClosed()) {
-            throw new WgpuException("Cannot write to closed buffer");
-        }
-
-        try (Arena arena = Arena.ofConfined()) {
-            MemorySegment dataSegment = arena.allocate(data.length);
-            MemorySegment.copy(data, 0, dataSegment, ValueLayout.JAVA_BYTE, 0, data.length);
-            webgpu_h.wgpuQueueWriteBuffer(handle, buffer.getHandle(), bufferOffset, dataSegment, data.length);
-        } catch (Exception e) {
-            throw new WgpuException("Failed to write buffer", e);
-        }
+        writeBuffer(buffer, bufferOffset, MemorySegment.ofArray(data));
     }
 
     /**
@@ -97,15 +87,26 @@ public class Queue extends WgpuResource {
      * @param dataSize     The amount of data to write
      */
     public void writeBuffer(Buffer buffer, long bufferOffset, byte[] data, int dataOffset, int dataSize) {
+        writeBuffer(buffer, bufferOffset, MemorySegment.ofArray(data).asSlice(dataOffset, dataSize));
+    }
+
+    /**
+     * Writes data to a buffer on the GPU.
+     *
+     * @param buffer       The buffer to write to
+     * @param bufferOffset The offset in the buffer to start writing at
+     * @param data         The data to write
+     */
+    public void writeBuffer(Buffer buffer, long bufferOffset, MemorySegment data) {
         checkNotClosed();
         if (buffer.isClosed()) {
             throw new WgpuException("Cannot write to closed buffer");
         }
 
         try (Arena arena = Arena.ofConfined()) {
-            MemorySegment dataSegment = arena.allocate(dataSize);
-            MemorySegment.copy(data, dataOffset, dataSegment, ValueLayout.JAVA_BYTE, 0, dataSize);
-            webgpu_h.wgpuQueueWriteBuffer(handle, buffer.getHandle(), bufferOffset, dataSegment, dataSize);
+            MemorySegment dataSegment = arena.allocate(data.byteSize());
+            MemorySegment.copy(data, 0, dataSegment, ValueLayout.JAVA_BYTE, 0, (int)data.byteSize());
+            webgpu_h.wgpuQueueWriteBuffer(handle, buffer.getHandle(), bufferOffset, dataSegment, (int)data.byteSize());
         } catch (Exception e) {
             throw new WgpuException("Failed to write buffer", e);
         }
@@ -120,11 +121,37 @@ public class Queue extends WgpuResource {
      * @param writeSize   The size of the region to write
      */
     public void writeTexture(ImageCopyTexture destination, byte[] data, ImageCopyTextureLayout dataLayout, Extent3D writeSize) {
+        writeTexture(destination, MemorySegment.ofArray(data), dataLayout, writeSize);
+    }
+
+    /**
+     * Writes data to a texture on the GPU.
+     *
+     * @param destination The texture destination descriptor
+     * @param data        The texture data to write
+     * @param dataOffset  The offset to the texture data
+     * @param dataSize    The size of the texture data
+     * @param dataLayout  The layout of the data in memory
+     * @param writeSize   The size of the region to write
+     */
+    public void writeTexture(ImageCopyTexture destination, byte[] data, int dataOffset, int dataSize, ImageCopyTextureLayout dataLayout, Extent3D writeSize) {
+        writeTexture(destination, MemorySegment.ofArray(data).asSlice(dataOffset, dataSize), dataLayout, writeSize);
+    }
+
+    /**
+     * Writes data to a texture on the GPU.
+     *
+     * @param destination The texture destination descriptor
+     * @param data        The texture data to write
+     * @param dataLayout  The layout of the data in memory
+     * @param writeSize   The size of the region to write
+     */
+    public void writeTexture(ImageCopyTexture destination, MemorySegment data, ImageCopyTextureLayout dataLayout, Extent3D writeSize) {
         checkNotClosed();
         if (destination == null) {
             throw new WgpuException("Destination cannot be null");
         }
-        if (data == null || data.length == 0) {
+        if (data == null || data.byteSize() == 0) {
             throw new WgpuException("Data cannot be null or empty");
         }
         if (dataLayout == null) {
@@ -139,14 +166,14 @@ public class Queue extends WgpuResource {
             MemorySegment dataLayoutStruct = dataLayout.marshal(arena);
             MemorySegment writeSizeStruct = writeSize.marshal(arena);
 
-            MemorySegment dataSegment = arena.allocate(data.length);
-            MemorySegment.copy(data, 0, dataSegment, ValueLayout.JAVA_BYTE, 0, data.length);
+            MemorySegment dataSegment = arena.allocate(data.byteSize());
+            MemorySegment.copy(data, 0, dataSegment, ValueLayout.JAVA_BYTE, 0, (int)data.byteSize());
 
             webgpu_h.wgpuQueueWriteTexture(
                     handle,
                     destinationStruct,
                     dataSegment,
-                    data.length,
+                    data.byteSize(),
                     dataLayoutStruct,
                     writeSizeStruct
             );
